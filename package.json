@@ -1,6 +1,9 @@
 {
     "name": "tabla-model",
-    "version": "1.4.0",
+    "version": "2.0.0",
+    "engines": {
+        "node": ">=18.0.0"
+    },
     "description": "crear representaciones de tablas sql en  modelos de datos ",
     "main": "index.js",
     "repository": {
@@ -8,7 +11,7 @@
         "url": "git+https://github.com/ever23/tabla-model.git"
     },
     "scripts": {
-        "test": "mocha ./test/index.js",
+        "test": "node --test ./test/index.js",
         "lint": "eslint ./index.js ./model2Sql.js ./sql2Model.js ./sqlHelpers.js ./createModel.js"
     },
     "keywords": [
@@ -18,11 +21,11 @@
     "author": "enyerverfranco@gmail.com",
     "license": "MIT",
     "devDependencies": {
-    "eslint": "^5.9.0",
-    "mocha": "^5.2.0"
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.1.0",
+        "globals": "^17.4.0"
     },
-    "dependencies":
-    {
-        "sqlstring":"^2.3.1"
+    "dependencies": {
+        "sqlstring": "^2.3.1"
     }
 }

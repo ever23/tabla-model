@@ -1,3 +1,4 @@
+const { describe, it } = require('node:test');
 const assert= require("assert")
 const sql2Model= require("../sql2Model")
 const {MYSQL_DB,POSTGRESQL_DB,SQLITE3_DB} = require("../sqlHelpers")

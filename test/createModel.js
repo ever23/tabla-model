@@ -1,3 +1,4 @@
+const { describe, it } = require('node:test');
 const assert= require("assert")
 const createModel= require("../createModel")
 const Model= require("../index")

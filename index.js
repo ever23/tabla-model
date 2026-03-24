@@ -8,6 +8,10 @@ const createModel = require("./createModel")
 */
 class sqlTablaModel
 {
+    #colums
+    #foreingKey
+    #init
+    #metods
     /**
     * @param {string} tableName - el nombre de la tabla o el sql para crear una tabla
     * @param {object|array|string} params - opcional si el primer parametro contiene el sql 
@@ -46,7 +50,7 @@ class sqlTablaModel
             foreingKey=params.foreingKey
         }
 
-        this.__colums =colums || []
+        this.#colums =colums || []
         /*
         {
             key:string|array,
@@ -57,9 +61,9 @@ class sqlTablaModel
             onUpdate:string
         }
         */
-        this.__foreingKey  = foreingKey||[]
-        this.__init=[]
-        this.__metods={}
+        this.#foreingKey  = foreingKey||[]
+        this.#init=[]
+        this.#metods={}
     }
     /**
     * Agrega un metodo al modelo
@@ -68,7 +72,7 @@ class sqlTablaModel
     */
     method(name,callback)
     {
-        this.__metods[name]=callback
+        this.#metods[name]=callback
     }
     /**
     * retorna los datos del modelo
@@ -78,10 +82,10 @@ class sqlTablaModel
     {
         return {
             tabla:this.tabla,
-            colums:this.__colums,
-            foreingKey:this.__foreingKey,
-            init:this.__init,
-            methods:this.__metods
+            colums:this.#colums,
+            foreingKey:this.#foreingKey,
+            init:this.#init,
+            methods:this.#metods
         }
     }
     /**
@@ -90,7 +94,7 @@ class sqlTablaModel
     */
     colum(coll)
     {
-        this.__colums.push(coll)
+        this.#colums.push(coll)
     }
     /**
     * agrega una clave foranea al modelo 
@@ -99,8 +103,8 @@ class sqlTablaModel
     foreingKey(key)
     {
         if(key===undefined)
-            return this.__foreingKey
-        this.__foreingKey.push(key)
+            return this.#foreingKey
+        this.#foreingKey.push(key)
     }
     /**
     * agrega lo datos de inicializacion del modelo 
@@ -111,9 +115,9 @@ class sqlTablaModel
        
         if(params instanceof Array && params.length==1)
         {
-            this.__init.push(params[0])
+            this.#init.push(params[0])
         }else {
-            this.__init.push(params)
+            this.#init.push(params)
         }
         
     }

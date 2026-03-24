@@ -100,11 +100,11 @@ class createModel
         let ident="        "
         let ret = `{\n${ident}    key:${JSON.stringify(key.key)},\n${ident}    reference:"${key.reference}",\n`
         ret+=`${ident}    keyReference:${JSON.stringify(key.keyReference)},\n`
-        if(key.match!=undefined && key.match!='NONE')
+        if(key.match!=undefined && key.match!="NONE")
             ret+=`${ident}    match:"${key.match}",\n`
-        if(key.onDelete!=undefined && key.onDelete!='NO ACTION')
+        if(key.onDelete!=undefined && key.onDelete!="NO ACTION")
             ret+=`${ident}    onDelete:"${key.onDelete}",\n`
-        if(key.onUpdate!=undefined && key.onUpdate!='NO ACTION')
+        if(key.onUpdate!=undefined && key.onUpdate!="NO ACTION")
             ret+=`${ident}    onUpdate:"${key.onUpdate}",\n`
         ret+=`${ident}}`
         return ret

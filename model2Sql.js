@@ -1,52 +1,52 @@
-const sqlHelpers=require("./sqlHelpers")
+const sqlHelpers = require("./sqlHelpers")
 
 /**
 * model2Sql
 * convierte un objeto de modelo en sql nesesario para crear la tabla que representa 
 *
 */
-class model2Sql
-{
+class model2Sql {
+    #model
+    #helpers
+    #typeDB
+
     /**
     * @param {dbTablaModel} model - modelo a convertir 
     * @param {object} helper - configuraciones para el helper 
     */
-    constructor(model,helper)
-    {
-        this.__model=model
-        this.__helpers=new sqlHelpers(helper)
-        this.__typeDB=helper.typeDB
+    constructor(model, helper) {
+        this.#model = model
+        this.#helpers = new sqlHelpers(helper)
+        this.#typeDB = helper.typeDB
     }
     /**
     * crea una columna en sql 
     * @param {object} colum - {name:string, type:string, efaultNull:boolean, primary:boolean, unique:bolean, defaul:string}
     * @return {string}
     */
-    __colums(colum)
-    {
-        if(this.__typeDB===sqlHelpers.POSTGRESQL_DB && colum.autoincrement)
-        {
-            colum.type="serial"
+    #colums(colum) {
+        // 1. Guardamos el tipo en una variable temporal en lugar de mutar el objeto
+        let columType = colum.type
+
+        if (this.#typeDB === sqlHelpers.POSTGRESQL_DB && colum.autoincrement) {
+            columType = "serial" // 2. Mutamos la variable temporal
         }
-        let sql =`${this.__helpers.protectIdentifiers(colum.name)} ${colum.type}`
-        if(colum.defaultNull!==undefined)
-            if(colum.defaultNull)
-            {
-                sql+=" NULL"
-            }else {
-                sql+=" NOT NULL"
+
+        let sql = `${this.#helpers.protectIdentifiers(colum.name)} ${columType}`
+        if (colum.defaultNull !== undefined)
+            if (colum.defaultNull) {
+                sql += " NULL"
+            } else {
+                sql += " NOT NULL"
             }
-        if(colum.primary && !colum.defaultNull)
-        {
-            sql+=" NOT NULL"
+        if (colum.primary && !colum.defaultNull) {
+            sql += " NOT NULL"
         }
-        if(colum.default!==undefined)
-        {
-            sql+=` DEFAULT ${colum.default}`
+        if (colum.default !== undefined) {
+            sql += ` DEFAULT ${colum.default}`
         }
-        if(colum.autoincrement && this.__typeDB===sqlHelpers.MYSQL_DB)
-        {
-            sql+=" AUTO_INCREMENT"
+        if (colum.autoincrement && this.#typeDB === sqlHelpers.MYSQL_DB) {
+            sql += " AUTO_INCREMENT"
         }
         return sql
     }
@@ -55,9 +55,8 @@ class model2Sql
     * @params {array} keys - nombre de las claves primarias 
     * @return {string}
     */
-    __primaryKeys(keys)
-    {
-        let colums=this.__helpers.protectIdentifiers(keys).join(",")
+    #primaryKeys(keys) {
+        let colums = this.#helpers.protectIdentifiers(keys).join(",")
         return `PRIMARY KEY (${colums})`
     }
     /**
@@ -65,9 +64,8 @@ class model2Sql
     * @params {array} keys - nombre de las claves unicas 
     * @return {string}
     */
-    __uniqueKeys(keys)
-    {
-        let colums=this.__helpers.protectIdentifiers(keys).join(",")
+    #uniqueKeys(keys) {
+        let colums = this.#helpers.protectIdentifiers(keys).join(",")
         return `UNIQUE (${colums})`
     }
     /**
@@ -75,9 +73,8 @@ class model2Sql
     * @params {array} keys - nombre de los indices
     * @return {string}
     */
-    __indexKey(keys)
-    {
-        let colums=this.__helpers.protectIdentifiers(keys).join(",")
+    #indexKey(keys) {
+        let colums = this.#helpers.protectIdentifiers(keys).join(",")
         return `INDEX (${colums})`
     }
     /**
@@ -86,34 +83,28 @@ class model2Sql
     * @param {object} keys - clave foranea { key:string|array, reference:string, keyReference:string|array, match:string, onDelete:string, onUpdate:string}
     * @return {string}
     */
-    __foreingKey(tabla,keys,numero)
-    {
-        let keyReference="",key=""
-        if(keys.keyReference instanceof Array)
-        {
-            keyReference=this.__helpers.protectIdentifiers(keys.keyReference).join(",")
-        }else {
-            keyReference=this.__helpers.protectIdentifiers(keys.keyReference)
+    #foreingKey(tabla, keys, numero) {
+        let keyReference = "", key = ""
+        if (keys.keyReference instanceof Array) {
+            keyReference = this.#helpers.protectIdentifiers(keys.keyReference).join(",")
+        } else {
+            keyReference = this.#helpers.protectIdentifiers(keys.keyReference)
         }
-        if(keys.key instanceof Array)
-        {
-            key=this.__helpers.protectIdentifiers(keys.key).join(",")
-        }else {
-            key=this.__helpers.protectIdentifiers(keys.key)
+        if (keys.key instanceof Array) {
+            key = this.#helpers.protectIdentifiers(keys.key).join(",")
+        } else {
+            key = this.#helpers.protectIdentifiers(keys.key)
         }
-        let constrait=this.__helpers.protectIdentifiers(`m2s_${tabla}_${keys.reference}_${numero}`)
-        let sql=`CONSTRAINT ${constrait} FOREIGN KEY (${key}) REFERENCES ${this.__helpers.protectIdentifiers(keys.reference)} (${keyReference})`
-        if(keys.match!==undefined)
-        {
-            sql+=` MATCH ${keys.match}`
+        let constrait = this.#helpers.protectIdentifiers(`m2s_${tabla}_${keys.reference}_${numero}`)
+        let sql = `CONSTRAINT ${constrait} FOREIGN KEY (${key}) REFERENCES ${this.#helpers.protectIdentifiers(keys.reference)} (${keyReference})`
+        if (keys.match !== undefined) {
+            sql += ` MATCH ${keys.match}`
         }
-        if(keys.onUpdate!==undefined)
-        {
-            sql+=` ON UPDATE ${keys.onUpdate}`
+        if (keys.onUpdate !== undefined) {
+            sql += ` ON UPDATE ${keys.onUpdate}`
         }
-        if(keys.onDelete!==undefined)
-        {
-            sql+=` ON DELETE ${keys.onDelete}`
+        if (keys.onDelete !== undefined) {
+            sql += ` ON DELETE ${keys.onDelete}`
         }
         return sql
     }
@@ -122,62 +113,54 @@ class model2Sql
     * @param {object} data - {tabla:string, colums:array, foreingKey:array}
     * @return {string}
     */
-    __cerateTable(data)
-    {
+    #cerateTable(data) {
 
-        let colums= [],
-            primary   = [],
-            unique    = [],
-            index     = []
+        let colums = [],
+            primary = [],
+            unique = [],
+            index = []
 
-        for(let colum of data.colums)
-        {
-            colums.push(this.__colums(colum))
-            if(colum.primary!==undefined && colum.primary)
+        for (let colum of data.colums) {
+            colums.push(this.#colums(colum))
+            if (colum.primary !== undefined && colum.primary)
                 primary.push(colum.name)
-            if(colum.unique!==undefined && colum.unique)
+            if (colum.unique !== undefined && colum.unique)
                 unique.push(colum.name)
         }
 
-        if(primary.length>0)
-        {
-            colums.push(this.__primaryKeys(primary))
+        if (primary.length > 0) {
+            colums.push(this.#primaryKeys(primary))
         }
-        if(unique.length>0)
-        {
-            colums.push(this.__uniqueKeys(unique))
+        if (unique.length > 0) {
+            colums.push(this.#uniqueKeys(unique))
         }
-        if(this.__typeDB===sqlHelpers.MYSQL_DB)
-        {
-            for(let keys of data.foreingKey)
-            {
-                if(keys.key instanceof Array)
-                {
-                    for(let i of keys.key)
+        if (this.#typeDB === sqlHelpers.MYSQL_DB) {
+            for (let keys of data.foreingKey) {
+                if (keys.key instanceof Array) {
+                    for (let i of keys.key)
                         index.push(i)
-                }else {
+                } else {
                     index.push(keys.key)
                 }
             }
 
-            if(index.length>0)
-                colums.push(this.__indexKey(index))
+            if (index.length > 0)
+                colums.push(this.#indexKey(index))
         }
 
-        let i=1
-        for(let keys of data.foreingKey)
-            colums.push(this.__foreingKey(data.tabla,keys,i++))
-        return `CREATE TABLE ${this.__helpers.protectIdentifiers(data.tabla)} (${colums.join(",")});`
+        let i = 1
+        for (let keys of data.foreingKey)
+            colums.push(this.#foreingKey(data.tabla, keys, i++))
+        return `CREATE TABLE ${this.#helpers.protectIdentifiers(data.tabla)} (${colums.join(",")});`
     }
     /**
     * crea el sql nesesario para crea la tabla asociada al modelo pasado al constructor 
     * 
     * @return {string}
     */
-    sql()
-    {
-        return this.__cerateTable(this.__model.getData())
+    sql() {
+        return this.#cerateTable(this.#model.getData())
     }
 }
 
-module.exports=model2Sql
+module.exports = model2Sql

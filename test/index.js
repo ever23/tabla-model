@@ -1,3 +1,4 @@
+const { describe, it } = require('node:test');
 describe("test de tabla-model",()=>
 {
     require("./sqlHelpers")
