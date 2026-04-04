@@ -4,224 +4,198 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
 
+Módulo para la definición de modelos de datos SQL en JavaScript, permitiendo la conversión bidireccional entre representaciones de objetos y sentencias SQL.
+
 ## Tabla de contenidos
 
-- [Install](#install)
-- [Introduccion](#introduccion)
+- [Instalación](#instalación)
+- [Introducción](#introducción)
+- [Drivers Soportados](#drivers-soportados)
 - [Uso](#uso)
+- [Documentación del API](#documentación-del-api)
 
-## install
+## Instalación
 
-tabla-model es un  modulo de [Node.js](https://nodejs.org/es/) valido registrado en [npm registry](https://www.npmjs.com/).
+`tabla-model` es un módulo para [Node.js](https://nodejs.org/) disponible a través del registro de [npm](https://www.npmjs.com/).
 
-Para instalar use [`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
+Para instalarlo, ejecute el siguiente comando:
 
 ```sh
 $ npm install tabla-model
 ```
-## introduccion
 
-tabla-model crear representaciones de tablas sql en  modelos de datos javasript y viseversa.
+## Introducción
 
+`tabla-model` permite crear representaciones abstractas de tablas SQL mediante modelos de datos en JavaScript. Estos modelos pueden ser utilizados para generar código SQL de creación de tablas o para reconstruir modelos a partir de sentencias SQL existentes.
 
-## uso
+## Drivers Soportados
 
-para usar tabla-model solo es neseario instancear un objeto de la clase principal y agregar los datos
+Este ecosistema cuenta con varios adaptadores de alto nivel que integran `tabla-model` para diferentes motores de bases de datos:
 
-Ejemplo:
+- **[mysql-tab](https://github.com/ever23/mysql-tab)**: Controlador de alto nivel para MySQL.
+- **[pg-table](https://github.com/ever23/pg-table)**: Controlador de alto nivel para PostgreSQL.
+- **[sqlite3-tab](https://github.com/ever23/sqlite3-tab)**: Controlador de alto nivel para SQLite3.
+
+## Uso
+
+Para utilizar `tabla-model`, basta con instanciar la clase principal y definir las columnas y restricciones de la tabla.
+
+### Ejemplo básico:
+
 ```js
-// file ./model/test1.js
-const model=require("tabla-model")
-const test1=new model("test3",[
+// archivo ./model/test1.js
+const Model = require("tabla-model");
+
+const test1 = new Model("test3", [
     {
-        name:"id",
-        type:"int",
-        primary:true,
-        autoincrement:true
+        name: "id",
+        type: "int",
+        primary: true,
+        autoincrement: true
     },
     {
-        name:"row1",
-        type:"text"
+        name: "row1",
+        type: "text"
     },
     {
-        name:"row2",
-        type:"int",
+        name: "row2",
+        type: "int",
     },
     {
-        name:"row3",
-        type:"date",
+        name: "row3",
+        type: "date",
     }
-])
-test1.foreingKey({ // se agrega las claves foraneas
-    key:"row2",
-    reference:"test4",
-    keyReference:"id_key2",
-    onUpdate:'CASCADE',
-    onDelete:'NO ACTION',
-    // match: ' '
-})
-console.log(test1.sql())
+]);
+
+test1.foreingKey({ // Definición de claves foráneas
+    key: "row2",
+    reference: "test4",
+    keyReference: "id_key2",
+    onUpdate: 'CASCADE',
+    onDelete: 'NO ACTION'
+});
+
+console.log(test1.sql());
 ```
-## sqlModel#constructor(tabla,config)
-Constructor de la clase
 
-* `tabla {string}`: nombre de la tabla o sentencia sql para crear una tabla y se usaran los campos y claves foraneas de la sentencia
-* `config {object|array}`: si el primer parametro es el nombre de una tabla este sera los datos de el modelo *`{colums:Array, foreingKey:Array}`* si es un array se tomara como las columnas en caso de que el primer parametro sea un sentencia sql *CREATE TABLE* este sera el caracter de escape sql
+---
 
+## Documentación del API
+
+### `sqlModel#constructor(tabla, config)`
+Constructor de la clase.
+
+* `tabla {string}`: Nombre de la tabla o una sentencia SQL completa (`CREATE TABLE`). Si se proporciona una sentencia SQL, el modelo se extraerá automáticamente de ella.
+* `config {object|array}`: 
+    * Si el primer parámetro es el nombre de la tabla, este puede ser un objeto con el formato `{colums: Array, foreingKey: Array}` o simplemente un `Array` de columnas.
+    * Si el primer parámetro es una sentencia SQL `CREATE TABLE`, este parámetro indicará el carácter de escape SQL.
+
+#### Ejemplo con objeto de configuración:
 ```js
-const model=require("tabla-model")
-const test1=new model("test3",{
-    colums:[
-        {
-            name:"id",
-            type:"int",
-            primary:true,
-            autoincrement:true
-        },
-        {
-            name:"row1",
-            type:"text"
-        },
-        {
-            name:"row2",
-            type:"int",
-        },
-        {
-            name:"row3",
-            type:"date",
-        }
+const Model = require("tabla-model");
+const test1 = new Model("test3", {
+    colums: [
+        { name: "id", type: "int", primary: true, autoincrement: true },
+        { name: "row1", type: "text" },
+        { name: "row2", type: "int" },
+        { name: "row3", type: "date" }
     ],
-    foreingKey:[
-        { // se agrega las claves foraneas
-            key:"row2",
-            reference:"test4",
-            keyReference:"id_key2",
-            onUpdate:'CASCADE',
-            onDelete:'NO ACTION',
-            // match: ' '
+    foreingKey: [
+        {
+            key: "row2",
+            reference: "test4",
+            keyReference: "id_key2",
+            onUpdate: 'CASCADE',
+            onDelete: 'NO ACTION'
         }
     ]
-})
+});
 ```
+
+#### Ejemplo a partir de SQL:
 ```js
-const model=require("tabla-model")
-const test1=new model(`create table test1(
-    id int not null AUTO_INCREMENT,
+const Model = require("tabla-model");
+const test1 = new Model(`CREATE TABLE test1 (
+    id int NOT NULL AUTO_INCREMENT,
     row1 text,
     row2 int,
     row3 date,
-    primary key (id),
-    foreing key row2 references test4(id_key2)
-    on update cascade
-    on delete no action
-    )`)
+    PRIMARY KEY (id),
+    FOREIGN KEY (row2) REFERENCES test4(id_key2)
+    ON UPDATE CASCADE
+    ON DELETE NO ACTION
+)`);
 ```
 
-## sqlModel#colum(coll)
-Agrega una columna al modelo
+### `sqlModel#colum(coll)`
+Agrega una columna al modelo.
 
-* `coll {object}`: objeto con los datos de la columna, este objeto debe contar con los siguientes atributos
+* `coll {object}`: Objeto con la definición de la columna.
 ```js
 {
-    name:String,//nombre de la columna
-    type:String,// tipo de dato de la columna segun el motor de base de datos
-    defaultNull:Boolean,//(opcional) true si el valor por defecto puede ser null
-    primary:Boolean,//(opcional) true si es una clave primaria
-    unique:Boolean,//(opcional) true si es una indice unico
-    defaul:String//(opcional)  valor por defecto
+    name: String,        // Nombre de la columna
+    type: String,        // Tipo de dato según el motor de DB
+    defaultNull: Boolean,// (Opcional) permite valores nulos si es true
+    primary: Boolean,    // (Opcional) define si es clave primaria
+    unique: Boolean,     // (Opcional) define si es un índice único
+    defaul: String       // (Opcional) valor por defecto
 }
 ```
 
-## sqlModel#foreingKey(key)
-Agrega una clave foraanea a el modelo
+### `sqlModel#foreingKey(key)`
+Agrega una clave foránea al modelo.
 
-* `key {object}`: objeto con los datos clave foranea, este objeto debe contar con los siguientes atributos
+* `key {object}`: Objeto con la definición de la clave foránea.
 ```js
 {
-    key:String|Array,// nombre del campo para la clave foranea  
-    reference:String,// nombre de la tabla a la que hace referencia
-    keyReference:String|Array,//nombre del campo en la table de referencia
-    match:String,//
-    onDelete:String,//indica que acciones se deben realizar en la tabla actual
-    // si se borra una fila en la tabla referenciada
-    onUpdate:String//indica que acciones se deben realizar en la tabla actual
-    // si se edita una fila en la tabla referenciada
+    key: String|Array,          // Campo(s) locales de la clave foránea
+    reference: String,          // Tabla de referencia
+    keyReference: String|Array, // Campo(s) en la tabla referenciada
+    match: String,              // (Opcional) tipo de coincidencia
+    onDelete: String,           // Acción al borrar (CASCADE, NO ACTION, etc.)
+    onUpdate: String            // Acción al actualizar
 }
 ```
 
-## sqlModel#insert(...params)
-Agrega datos a para la inicializacion de la tabla
+### `sqlModel#insert(...params)`
+Agrega datos para la inicialización de la tabla.
 
-* `...params`: se pueden agregar parametro a parametro o en un array en un unico parametro
+* `...params`: Los datos se pueden pasar de forma individual, como una lista de argumentos, o dentro de un único array.
 
-## sqlModel#method(name,callback)
-Agrega un metodo al modelo de la tabla
+### `sqlModel#method(name, callback)`
+Extiende el modelo agregando un método personalizado.
 
-* `name {string}`: nombre del metodo
-* `callback {function}`: funcion correspondiente
+* `name {string}`: Nombre del método.
+* `callback {function}`: Función que se ejecutará al llamar al método.
 
-## sqlModel#getData()
-Retorna un objeto con todos los datos agregados al modelo en el formato
-*
+### `sqlModel#getData()`
+Retorna un objeto con la estructura completa del modelo.
 ```js
 {
-    tabla:String,// nombre de la tabla
-    colums:Array,// columnas de la tabla
-    foreingKey:Array,// claves foranes de la tabla
-    init:Array,// datos de inicializacion
-    methods:Object// metodos agregados al modelo
+    tabla: String,      // Nombre de la tabla
+    colums: Array,      // Definición de columnas
+    foreingKey: Array,  // Claves foráneas
+    init: Array,        // Datos de inicialización
+    methods: Object     // Métodos personalizados
 }
 ```
 
-## sqlModel#sql(config)
+### `sqlModel#sql(config)`
+Genera y retorna la sentencia SQL necesaria para crear la tabla representada por el modelo.
 
-Retorna el sql nesesario para crear la tabla del modelo
-
-* `config {object}`: configuracion para el helper `{escapeChar:String, reserveIdentifiers:Array, ar_aliased_tables:String, dbprefix:String, escapeString:String}`
+* `config {object}`: Configuración opcional para el generador SQL (caracteres de escape, prefijos, etc.).
 ```js
-const model=require("tabla-model")
-const test1=new model("test3",{
-    colums:[
-        {
-            name:"id",
-            type:"int",
-            primary:true,
-            autoincrement:true
-        },
-        {
-            name:"row1",
-            type:"text"
-        },
-        {
-            name:"row2",
-            type:"int",
-        },
-        {
-            name:"row3",
-            type:"date",
-        }
-    ],
-    foreingKey:[
-        { // se agrega las claves foraneas
-            key:"row2",
-            reference:"test4",
-            keyReference:"id_key2",
-            onUpdate:'CASCADE',
-            onDelete:'NO ACTION',
-            // match: ' '
-        }
-    ]
-})
-console.log(test1.sql({escapeString:"`"}))
+{
+    escapeChar: String,
+    reserveIdentifiers: Array,
+    dbprefix: String
+}
 ```
 
-## sqlModel#saveModel(file)
+### `sqlModel#saveModel(file)`
+Crea un archivo JavaScript con la definición del modelo para ser reutilizado.
 
-Crea un archivo javascript con los datos del modelo para ser usado 
-
-* `file`: Nombre del fichero donde sera guardado el modelo 
-
-
+* `file {string}`: Ruta del archivo donde se guardará el modelo.
 
 [npm-image]: https://img.shields.io/npm/v/tabla-model.svg
 [npm-url]: https://npmjs.org/package/tabla-model
