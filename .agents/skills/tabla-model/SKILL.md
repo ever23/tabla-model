@@ -52,16 +52,20 @@ module.exports = UsuarioModel;
 
 ## 2. Inyección de Métodos Personalizados
 
-Puedes extender la funcionalidad de una tabla agregando métodos que estarán disponibles en la instancia de `dbTabla`.
+Puedes extender la funcionalidad de una tabla agregando métodos de negocio. Al invocar un método personalizado, la librería inyecta automáticamente los dos primeros argumentos:
+1. `tabla`: La instancia actual de `dbTabla`.
+2. `db`: La instancia de la conexión (`Connect`).
+3. `...args`: Parámetros adicionales pasados por el usuario.
 
 ```javascript
-// Agregamos un método para buscar usuarios activos
-UsuarioModel.method('getActivos', async (tabla, conexion) => {
-    return await tabla.select("estado = 'activo'");
+// Agregamos un método con parámetros extra
+UsuarioModel.method('getRanking', async (tabla, db, limit = 10) => {
+    // db permite ejecutar queries directas si es necesario
+    return await tabla.select("*", "puntos > 0", "puntos DESC", limit);
 });
 
 // Uso posterior:
-// const activos = await db.tabla('usuarios').getActivos();
+// const top5 = await db.tabla('usuarios').getRanking(5);
 ```
 
 ## 3. Semillas de Datos (Initial Seed)
@@ -92,6 +96,7 @@ console.log(logsModel.getData()); // Retorna el objeto estructurado
 > 2.  **Exportación**: Exporta siempre la instancia de `new Model(...)` para que pueda ser consumida por `db.addModel()` o `db.pathModels()`.
 > 3.  **Consistencia**: Antes de realizar una consulta, verifica siempre el archivo de modelo correspondiente para asegurar que los nombres de las columnas coincidan.
 > 4.  **Métodos**: Prefiere usar `.method()` para encapsular lógica de negocio compleja que dependa exclusivamente de esa tabla.
+> 5.  **Orden de Parámetros**: Al definir un método, respeta siempre el orden `(tabla, db, ...misParams)`. No asumas que tu primer parámetro es el que pasas en la llamada; es el tercero.
 
 ## 6. Referencia de Atributos de Columna
 - `name`: Nombre físico de la columna.

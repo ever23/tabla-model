@@ -61,16 +61,22 @@ const UsuarioModel = new Model('usuarios', {
 ```
 
 ### 2. Extensión con Métodos Personalizados
-Puedes agregar métodos que estarán disponibles cuando accedas a la tabla desde un adaptador.
+Puedes agregar métodos de negocio que estarán disponibles directamente en las instancias de la tabla.
+
+**Importante:** Al definir el método, la librería inyecta automáticamente los dos primeros argumentos:
+1. `tabla`: La instancia actual de `dbTabla`.
+2. `db`: La instancia de la conexión (`Connect`).
+3. `...params`: Tus parámetros personalizados.
 
 ```javascript
-// Agregamos un método de negocio a la tabla
-UsuarioModel.method('getRanking', async (tabla, conexion) => {
-    return await tabla.select("*", "puntos > 0", "puntos DESC", 10);
+// Agregamos un método con parámetros extra
+UsuarioModel.method('getByPuntos', async (tabla, db, minPuntos, limit = 10) => {
+    // Usamos 'tabla' para hacer consultas
+    return await tabla.select("*", `puntos > ${minPuntos}`, "puntos DESC", limit);
 });
 
-// Luego en tu app:
-// const top10 = await db.tabla('usuarios').getRanking();
+// Luego en tu app (en las rutas o controladores):
+// const ranking = await db.tabla('usuarios').getByPuntos(100, 5);
 ```
 
 ### 3. Semillas de Datos (Initial Seed)
