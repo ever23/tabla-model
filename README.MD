@@ -79,7 +79,23 @@ UsuarioModel.method('getByPuntos', async (tabla, db, minPuntos, limit = 10) => {
 // const ranking = await db.tabla('usuarios').getByPuntos(100, 5);
 ```
 
-### 3. Semillas de Datos (Initial Seed)
+### 3. Sintaxis Avanzada de Filtrado (Where Object)
+Al realizar consultas mediante objetos (en `select`, `update`, etc.), `dbtabla` soporta operadores especiales:
+*   **Sufijos de Comparación:** `campo%` (LIKE), `campo!` (!=), `campo>` (>), `campo<` (<), `campo>=` (>=), `campo<=` (<=).
+*   **Prefijos Lógicos:** `||campo` (OR), `&&campo` (AND).
+
+```javascript
+// Ejemplo de uso en un método:
+UsuarioModel.method('searchActive', async (tabla, db, term) => {
+    return await tabla.select({ "estado": "activo", "||nombre%": term + "%" });
+});
+```
+
+> [!IMPORTANT]
+> **Nota sobre parámetros en `select`:**
+> Si utilizas objetos para el filtrado `where`, asegúrate de pasar `null` para los parámetros opcionales que le preceden (`campos` y `joins`) si no los estás utilizando, para evitar que el objeto sea interpretado como una definición de Join.
+
+### 4. Semillas de Datos (Initial Seed)
 Ideal para configurar datos maestros o usuarios administradores por defecto.
 
 ```javascript

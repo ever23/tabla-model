@@ -314,7 +314,7 @@ class sqlHelpers {
         //console.log(/\d{0,}\.?\d{0,?}/.test(v),v)
         if (typeof result === "undefined" || result === null || (typeof result === "string" && (result.toLowerCase() === "null" || (result.toLowerCase() === "undefined")))) {
             return "NULL"
-        } else if (typeof result === "string" && /^[\d]+(\.[\d]+)?(e\+?[\d]+)?$/i.test(result)) {
+        } else if (typeof result === "string" && /^[\d]+(\.[\d]+)?(e\+?[\d]+)?$/i.test(result) && !/^0[0-9]+/.test(result)) {
             return result
         } else if (typeof result === "boolean") {
             return result ? "true" : "false"
