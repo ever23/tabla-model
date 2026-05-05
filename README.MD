@@ -93,7 +93,13 @@ UsuarioModel.method('searchActive', async (tabla, db, term) => {
 
 > [!IMPORTANT]
 > **Nota sobre parámetros en `select`:**
-> Si utilizas objetos para el filtrado `where`, asegúrate de pasar `null` para los parámetros opcionales que le preceden (`campos` y `joins`) si no los estás utilizando, para evitar que el objeto sea interpretado como una definición de Join.
+> Si utilizas objetos para el filtrado `where` en la sintaxis posicional, asegúrate de pasar `null` para los parámetros opcionales que le preceden (`campos` y `joins`).
+>
+> **Sintaxis Recomendada (Objeto Único):**
+> Para evitar errores de posición, usa un objeto con llaves explícitas:
+> ```javascript
+> await tabla.select({ where: { activo: 1 }, order: "id DESC" });
+> ```
 
 ### 4. Semillas de Datos (Initial Seed)
 Ideal para configurar datos maestros o usuarios administradores por defecto.

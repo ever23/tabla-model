@@ -106,3 +106,30 @@ console.log(logsModel.getData()); // Retorna el objeto estructurado
 - `defaultNull`: `true` si permite nulos.
 - `default`: Valor por defecto (ej: `'activo'`, `0`, `'CURRENT_TIMESTAMP'`).
 - `unique`: `true` para restricción de unicidad.
+
+## 7. Sintaxis Avanzada de Filtrado (Where Object)
+
+Al utilizar objetos para la cláusula `where` en métodos como `select`, `update` o `delete`, puedes usar operadores especiales:
+
+### Operadores de Comparación (Sufijos)
+Añade estos caracteres al final del nombre del campo:
+- `campo%`: Genera `LIKE 'valor'`.
+- `campo!`: Genera `!= 'valor'`.
+- `campo>` / `campo<`: Genera `>` / `<`.
+- `campo>=` / `campo<=`: Genera `>=` / `<=`.
+
+### Operadores Lógicos (Prefijos)
+Añade estos caracteres al inicio del nombre del campo:
+- `||campo`: Cambia el operador a `OR`.
+- `&&campo`: Asegura el operador `AND` (por defecto).
+
+### Nota sobre Cadenas Numéricas (Ceros a la izquierda)
+La librería detecta automáticamente si un string es un número. Sin embargo, si el string comienza con `0` seguido de dígitos (ej: `"01"`, `"007"`), **se tratará siempre como un string** (con comillas) para preservar códigos, secciones o identificadores especiales.
+
+> **Peligro de Parámetros:**
+> Debido al polimorfismo, si pasas un objeto en la primera posición de `select()`, se interpretará como una definición de **Joins**. Para filtrar por objeto de forma segura:
+> `await tabla.select(null, null, { "campo": "valor" });`
+>
+> **Sintaxis Recomendada (Objeto Único):**
+> La forma más segura es usar un objeto con llaves explícitas, lo cual anula el peligro del polimorfismo:
+> `await tabla.select({ where: { activo: 1 }, order: "id DESC" });`
