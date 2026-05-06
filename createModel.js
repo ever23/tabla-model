@@ -1,4 +1,3 @@
-const fs = require("fs")
 /**
 * createModel
 * Crea un archivo js apartir de un modelo  
@@ -115,7 +114,14 @@ class createModel
     */
     save(file)
     {
-        fs.writeFileSync(file,this.js())
+        if (typeof require !== 'undefined') {
+            try {
+                const fs = require("fs")
+                fs.writeFileSync(file,this.js())
+                return
+            } catch (e) {}
+        }
+        console.error("tabla-model: save() no es compatible con el entorno actual (falta 'fs')")
     }
 }
 module.exports= createModel

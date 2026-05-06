@@ -1,6 +1,6 @@
 /**
 * tabla test1
-* Tue Mar 24 2026 12:04:53 GMT-0400 (hora de Venezuela)
+* Tue May 05 2026 22:27:06 GMT-0400 (hora de Venezuela)
 */
 const tablaModel = require("tabla-model")
 const test1=new tablaModel("test1",{
