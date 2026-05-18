@@ -145,4 +145,5 @@ class sqlTablaModel
 sqlTablaModel.MYSQL_DB=sqlHelpers.MYSQL_DB
 sqlTablaModel.POSTGRESQL_DB=sqlHelpers.POSTGRESQL_DB
 sqlTablaModel.SQLITE3_DB=sqlHelpers.SQLITE3_DB
+sqlTablaModel.SQLSERVER_DB=sqlHelpers.SQLSERVER_DB
 module.exports=sqlTablaModel

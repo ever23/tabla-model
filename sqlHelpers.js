@@ -341,4 +341,5 @@ class sqlHelpers {
 sqlHelpers.MYSQL_DB = "mysql"
 sqlHelpers.POSTGRESQL_DB = "pg"
 sqlHelpers.SQLITE3_DB = "sqlite3"
+sqlHelpers.SQLSERVER_DB = "mssql"
 module.exports = sqlHelpers

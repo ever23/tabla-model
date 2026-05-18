@@ -28,6 +28,10 @@ class model2Sql {
         // 1. Guardamos el tipo en una variable temporal en lugar de mutar el objeto
         let columType = colum.type
 
+        if (this.#typeDB === sqlHelpers.SQLSERVER_DB && (columType.toLowerCase() === 'boolean' || columType.toLowerCase() === 'bool')) {
+            columType = "BIT"
+        }
+
         if (this.#typeDB === sqlHelpers.POSTGRESQL_DB && colum.autoincrement) {
             columType = "serial" // 2. Mutamos la variable temporal
         }
@@ -47,6 +51,8 @@ class model2Sql {
         }
         if (colum.autoincrement && this.#typeDB === sqlHelpers.MYSQL_DB) {
             sql += " AUTO_INCREMENT"
+        } else if (colum.autoincrement && this.#typeDB === sqlHelpers.SQLSERVER_DB) {
+            sql += " IDENTITY(1,1)"
         }
         return sql
     }
