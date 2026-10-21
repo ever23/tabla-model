@@ -6,6 +6,7 @@
     },
     "description": "crear representaciones de tablas sql en  modelos de datos ",
     "main": "index.js",
+    "types": "index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ever23/tabla-model.git"
