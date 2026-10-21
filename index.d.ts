@@ -27,8 +27,8 @@ export type ColumnSqlType =
     | 'blob'
     | (string & {});
 
-export interface ColumnDefinition {
-    name: string;
+export interface ColumnDefinition<T = Record<string, any>> {
+    name: (keyof T & string) | string;
     type: ColumnSqlType;
     primary?: boolean;
     autoincrement?: boolean;
@@ -49,11 +49,11 @@ export interface ForeignKeyDefinition {
     onUpdate?: 'CASCADE' | 'SET NULL' | 'NO ACTION' | 'RESTRICT' | string;
 }
 
-export interface ModelParams {
+export interface ModelParams<T = Record<string, any>> {
     /** Lista de columnas del modelo (recomendado) */
-    columns?: ColumnDefinition[];
+    columns?: ColumnDefinition<T>[];
     /** Lista de columnas del modelo (retrocompatibilidad) */
-    colums?: ColumnDefinition[];
+    colums?: ColumnDefinition<T>[];
     /** Claves foráneas (recomendado) */
     foreignKey?: ForeignKeyDefinition[];
     /** Claves foráneas (retrocompatibilidad) */
@@ -61,10 +61,10 @@ export interface ModelParams {
     foreignkeys?: ForeignKeyDefinition[];
 }
 
-export class sqlTablaModel {
+export class sqlTablaModel<T = Record<string, any>> {
     tabla: string;
 
-    constructor(tableName: string, params?: ModelParams | ColumnDefinition[] | string);
+    constructor(tableName: string, params?: ModelParams<T> | ColumnDefinition<T>[] | string);
 
     /**
      * Inyecta un método de negocio personalizado en las instancias de la tabla.
@@ -77,8 +77,8 @@ export class sqlTablaModel {
      */
     getData(): {
         tabla: string;
-        columns: ColumnDefinition[];
-        colums: ColumnDefinition[];
+        columns: ColumnDefinition<T>[];
+        colums: ColumnDefinition<T>[];
         foreignKey: ForeignKeyDefinition[];
         foreingKey: ForeignKeyDefinition[];
         init: any[];
@@ -88,8 +88,8 @@ export class sqlTablaModel {
     /**
      * Agrega una columna al modelo
      */
-    column(coll: ColumnDefinition): void;
-    colum(coll: ColumnDefinition): void;
+    column(coll: ColumnDefinition<T>): void;
+    colum(coll: ColumnDefinition<T>): void;
 
     /**
      * Agrega o consulta claves foráneas
@@ -100,6 +100,7 @@ export class sqlTablaModel {
     /**
      * Define datos iniciales (semillas) para la tabla
      */
+    insert(data: Partial<T> | Record<string, any>): void;
     insert(...params: any[]): void;
 
     /**
