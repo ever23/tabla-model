@@ -2,9 +2,34 @@
  * Declaraciones de tipos TypeScript para tabla-model
  */
 
+export type ColumnSqlType =
+    | 'int'
+    | 'integer'
+    | 'tinyint'
+    | 'smallint'
+    | 'bigint'
+    | 'varchar'
+    | 'char'
+    | 'text'
+    | 'longtext'
+    | 'mediumtext'
+    | 'boolean'
+    | 'bool'
+    | 'date'
+    | 'datetime'
+    | 'timestamp'
+    | 'time'
+    | 'float'
+    | 'double'
+    | 'decimal'
+    | 'numeric'
+    | 'json'
+    | 'blob'
+    | (string & {});
+
 export interface ColumnDefinition {
     name: string;
-    type: string;
+    type: ColumnSqlType;
     primary?: boolean;
     autoincrement?: boolean;
     unique?: boolean;
