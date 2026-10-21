@@ -42,14 +42,14 @@ Define las columnas y sus atributos (tipos, claves primarias, unicidad).
 const Model = require('tabla-model');
 
 const UsuarioModel = new Model('usuarios', {
-    colums: [
+    columns: [
         { name: 'id', type: 'int', primary: true, autoincrement: true },
         { name: 'username', type: 'varchar(50)', defaultNull: false, unique: true },
         { name: 'email', type: 'varchar(100)' },
         { name: 'puntos', type: 'int', default: 0 }
     ],
-    // Definición de Claves Foráneas
-    foreingKey: [
+    // Definición de Claves Foráneas (Opcional)
+    foreignKey: [
         {
             key: 'id_perfil',
             reference: 'perfiles',
@@ -58,6 +58,11 @@ const UsuarioModel = new Model('usuarios', {
         }
     ]
 });
+```
+
+> [!NOTE]
+> **Retrocompatibilidad Garantizada:**  
+> Por compatibilidad con proyectos existentes, los nombres tradicionales `colums`, `foreingKey` y `defaul` siguen estando 100% soportados internamente. Puedes usar la convención estándar en inglés (`columns`, `foreignKey`, `default`) o la tradicional de forma indistinta.
 ```
 
 ### 2. Extensión con Métodos Personalizados
@@ -72,7 +77,11 @@ Puedes agregar métodos de negocio que estarán disponibles directamente en las 
 // Agregamos un método con parámetros extra
 UsuarioModel.method('getByPuntos', async (tabla, db, minPuntos, limit = 10) => {
     // Usamos 'tabla' para hacer consultas
-    return await tabla.select("*", `puntos > ${minPuntos}`, "puntos DESC", limit);
+    return await tabla.select({
+        where: `puntos > ${minPuntos}`,
+        order: "puntos DESC",
+        limit: limit
+    });
 });
 
 // Luego en tu app (en las rutas o controladores):
@@ -87,7 +96,10 @@ Al realizar consultas mediante objetos (en `select`, `update`, etc.), `dbtabla` 
 ```javascript
 // Ejemplo de uso en un método:
 UsuarioModel.method('searchActive', async (tabla, db, term) => {
-    return await tabla.select({ "estado": "activo", "||nombre%": term + "%" });
+    return await tabla.select({
+        where: { "estado": "activo", "||nombre%": term + "%" },
+        order: "id DESC"
+    });
 });
 ```
 

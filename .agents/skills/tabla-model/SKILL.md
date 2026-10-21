@@ -13,7 +13,7 @@ const Model = require('tabla-model');
  * Los modelos actúan como la fuente de verdad de la estructura de la DB.
  */
 const UsuarioModel = new Model('usuarios', {
-    colums: [
+    columns: [ // También soportado como colums
         { 
             name: 'id', 
             type: 'int', 
@@ -37,7 +37,7 @@ const UsuarioModel = new Model('usuarios', {
         }
     ],
     // Definición de Claves Foráneas (Opcional)
-    foreingKey: [
+    foreignKey: [ // También soportado como foreingKey
         {
             key: 'id_perfil',
             reference: 'perfiles',
@@ -61,7 +61,11 @@ Puedes extender la funcionalidad de una tabla agregando métodos de negocio. Al 
 // Agregamos un método con parámetros extra
 UsuarioModel.method('getRanking', async (tabla, db, limit = 10) => {
     // db permite ejecutar queries directas si es necesario
-    return await tabla.select("*", "puntos > 0", "puntos DESC", limit);
+    return await tabla.select({
+        where: "puntos > 0",
+        order: "puntos DESC",
+        limit: limit
+    });
 });
 
 // Uso posterior:

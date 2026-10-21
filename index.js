@@ -25,7 +25,8 @@ class sqlTablaModel
             let model=sql2Model(tableName,params)
             tableName=model.tabla
             params={
-                colums:model.colums,
+                colums:model.columns || model.colums,
+                columns:model.columns || model.colums,
                 foreignkeys:model.foreignkeys
             }
         }
@@ -46,8 +47,8 @@ class sqlTablaModel
         {
             colums=params
         }else {
-            colums=params.colums
-            foreingKey=params.foreingKey
+            colums = params ? (params.columns || params.colums) : [];
+            foreingKey = params ? (params.foreignKey || params.foreignKeys || params.foreingKey) : [];
         }
 
         this.#colums =colums || []
@@ -83,7 +84,9 @@ class sqlTablaModel
         return {
             tabla:this.tabla,
             colums:this.#colums,
+            columns:this.#colums,
             foreingKey:this.#foreingKey,
+            foreignKey:this.#foreingKey,
             init:this.#init,
             methods:this.#metods
         }
@@ -92,19 +95,27 @@ class sqlTablaModel
     * agrega una columna al modelo 
     * @param {object} coll - {name:string, type:string, efaultNull:boolean, primary:boolean, unique:bolean, defaul:string}
     */
-    colum(coll)
+    column(coll)
     {
         this.#colums.push(coll)
+    }
+    colum(coll)
+    {
+        this.column(coll)
     }
     /**
     * agrega una clave foranea al modelo 
     * @param {object} key - { key:string|array, reference:string, keyReference:string|array, match:string, onDelete:string, onUpdate:string}
     */
-    foreingKey(key)
+    foreignKey(key)
     {
         if(key===undefined)
             return this.#foreingKey
         this.#foreingKey.push(key)
+    }
+    foreingKey(key)
+    {
+        return this.foreignKey(key)
     }
     /**
     * agrega lo datos de inicializacion del modelo 
@@ -123,7 +134,7 @@ class sqlTablaModel
     }
    
     /**
-    * retorna el sql nesesario para crear la tabla que el modelo representa 
+    * retorna el sql necesario para crear la tabla que el modelo representa 
     * @param {object} config - configuracion para el helperSql
     * @return {string}
     */

@@ -2,7 +2,7 @@ const sqlHelpers = require("./sqlHelpers")
 
 /**
 * model2Sql
-* convierte un objeto de modelo en sql nesesario para crear la tabla que representa 
+* convierte un objeto de modelo en sql necesario para crear la tabla que representa 
 *
 */
 class model2Sql {
@@ -46,8 +46,9 @@ class model2Sql {
         if (colum.primary && !colum.defaultNull) {
             sql += " NOT NULL"
         }
-        if (colum.default !== undefined) {
-            sql += ` DEFAULT ${colum.default}`
+        let defaultVal = colum.default !== undefined ? colum.default : colum.defaul;
+        if (defaultVal !== undefined) {
+            sql += ` DEFAULT ${defaultVal}`
         }
         if (colum.autoincrement && this.#typeDB === sqlHelpers.MYSQL_DB) {
             sql += " AUTO_INCREMENT"
@@ -115,7 +116,7 @@ class model2Sql {
         return sql
     }
     /**
-    * crea el sql nesesario para crea una tabla 
+    * crea el sql necesario para crea una tabla 
     * @param {object} data - {tabla:string, colums:array, foreingKey:array}
     * @return {string}
     */
@@ -126,7 +127,7 @@ class model2Sql {
             unique = [],
             index = []
 
-        for (let colum of data.colums) {
+        for (let colum of (data.columns || data.colums || [])) {
             colums.push(this.#colums(colum))
             if (colum.primary !== undefined && colum.primary)
                 primary.push(colum.name)
@@ -141,7 +142,7 @@ class model2Sql {
             colums.push(this.#uniqueKeys(unique))
         }
         if (this.#typeDB === sqlHelpers.MYSQL_DB) {
-            for (let keys of data.foreingKey) {
+            for (let keys of (data.foreignKey || data.foreingKey || [])) {
                 if (keys.key instanceof Array) {
                     for (let i of keys.key)
                         index.push(i)
@@ -155,12 +156,12 @@ class model2Sql {
         }
 
         let i = 1
-        for (let keys of data.foreingKey)
+        for (let keys of (data.foreignKey || data.foreingKey || []))
             colums.push(this.#foreingKey(data.tabla, keys, i++))
         return `CREATE TABLE ${this.#helpers.protectIdentifiers(data.tabla)} (${colums.join(",")});`
     }
     /**
-    * crea el sql nesesario para crea la tabla asociada al modelo pasado al constructor 
+    * crea el sql necesario para crea la tabla asociada al modelo pasado al constructor 
     * 
     * @return {string}
     */

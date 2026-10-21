@@ -1,6 +1,6 @@
 //const dbModel = require("./dbTablaModel")
 /**
-* Analiza un string sql create table y retorna los datos nesesarios para crear un modelo 
+* Analiza un string sql create table y retorna los datos necesarios para crear un modelo 
 * @param {string} sqlTable - sql
 * @param {string} escapeChar - caracter de escape 
 * @return {object} tabla, colums, foreignkeys

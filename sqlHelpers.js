@@ -30,7 +30,7 @@ class sqlHelpers {
 
     }
     /**
-    * convierte un objeto en expreciones booleana sql de igualdad
+    * convierte un objeto en expresiones booleana sql de igualdad
     * si el nombre de un atributo comienza por ||usara operado OR con
     * el siguiente atributo por defecto usa el operado AND
     * @param {object} valores
@@ -85,8 +85,8 @@ class sqlHelpers {
         return text
     }
     /**
-    * proteje identificadores en una exprecion boleana
-    * @param {string} text - exprecion boleana sqlite
+    * protege identificadores en una expresión boleana
+    * @param {string} text - expresión boleana sqlite
     * @return {string}
     */
     protectIdentifiersBolean(text) {

@@ -73,6 +73,10 @@ class createModel
     * @param {object} col - datos de la columna 
     * @return {string}
     */
+    column(col)
+    {
+        return this.colum(col)
+    }
     colum(col)
     {
         let ident="        "
@@ -94,6 +98,10 @@ class createModel
     * crea el javascript para una clave foranea 
     * @param {object} key - datos de la clave foranea
     */
+    foreignKey(key)
+    {
+        return this.foreingKey(key)
+    }
     foreingKey(key)
     {
         let ident="        "
