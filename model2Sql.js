@@ -36,6 +36,10 @@ class model2Sql {
             columType = "serial" // 2. Mutamos la variable temporal
         }
 
+        if (this.#typeDB === sqlHelpers.SQLITE3_DB && colum.autoincrement) {
+            return `${this.#helpers.protectIdentifiers(colum.name)} INTEGER PRIMARY KEY AUTOINCREMENT`
+        }
+
         let sql = `${this.#helpers.protectIdentifiers(colum.name)} ${columType}`
         if (colum.defaultNull !== undefined)
             if (colum.defaultNull) {
@@ -129,8 +133,11 @@ class model2Sql {
 
         for (let colum of (data.columns || data.colums || [])) {
             colums.push(this.#colums(colum))
-            if (colum.primary !== undefined && colum.primary)
-                primary.push(colum.name)
+            if (colum.primary !== undefined && colum.primary) {
+                if (!(this.#typeDB === sqlHelpers.SQLITE3_DB && colum.autoincrement)) {
+                    primary.push(colum.name)
+                }
+            }
             if (colum.unique !== undefined && colum.unique)
                 unique.push(colum.name)
         }

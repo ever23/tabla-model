@@ -57,11 +57,10 @@ describe("Test de la clase model2Sql",()=>
             escapeString:e=>e,
             typeDB:SQLITE3_DB
         }
-        let result_sqlite="CREATE TABLE test1 (id int NOT NULL,"
+        let result_sqlite="CREATE TABLE test1 (id INTEGER PRIMARY KEY AUTOINCREMENT,"
         +"row1 text,"
         +"row2 int,"
         +"row3 date,"
-        +"PRIMARY KEY (id),"
         +"CONSTRAINT m2s_test1_test2_1 FOREIGN KEY (row2) REFERENCES "
         +"test2 (id_key2) ON UPDATE CASCADE ON DELETE NO ACTION);"
         assert.equal((new model2Sql(require("./model/test1"),config)).sql(),result_sqlite,"error en sqlite")
