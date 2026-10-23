@@ -65,4 +65,22 @@ describe("Test de la clase model2Sql",()=>
         +"test2 (id_key2) ON UPDATE CASCADE ON DELETE NO ACTION);"
         assert.equal((new model2Sql(require("./model/test1"),config)).sql(),result_sqlite,"error en sqlite")
     })
+
+    it("metodo sqlAddColumn", () => {
+        let configMySQL = {
+            escapeChar: "`",
+            escapeString: e => e,
+            typeDB: MYSQL_DB
+        }
+        let m = require("./model/test1")
+        let m2s = new model2Sql(m, configMySQL)
+        assert.equal(
+            m2s.sqlAddColumn({ name: "nuevo", type: "varchar(100)", defaultNull: true }),
+            "ALTER TABLE `test1` ADD COLUMN `nuevo` varchar(100) NULL;"
+        )
+        assert.equal(
+            m.sqlAddColumn({ name: "nuevo", type: "varchar(100)", defaultNull: true }, configMySQL),
+            "ALTER TABLE `test1` ADD COLUMN `nuevo` varchar(100) NULL;"
+        )
+    })
 })

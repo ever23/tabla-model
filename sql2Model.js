@@ -16,7 +16,7 @@ function sql2Model(sqlTable,escapeChar="")
     let wordsEscaped=`[\\w,${escapeChar}]+`
     let replaceEscapeChar=new RegExp(`[${escapeChar}]+`,"g")
     
-    let sql=sqlTable.replace(new RegExp(`^[\\s\\t\\n]*CREATE[\\s\\t\\n]+TABLE[\\s\\t\\n]+${wordEscaped}\\((.*)\\)[\\s\\t\\n]*$`,"i"),"$1")
+    let sql=sqlTable.replace(new RegExp(`^[\\s\\t\\n]*CREATE[\\s\\t\\n]+TABLE[\\s\\t\\n]+${wordEscaped}[\\s\\t\\n]*\\((.*)\\)[\\s\\t\\n]*$`,"i"),"$1")
     let sqlArray=sql.split(/(^\(.*[,]+.*\)$)?[,]/)
     //console.log(sql)
     //console.log(sqlArray)
@@ -101,7 +101,7 @@ function sql2Model(sqlTable,escapeChar="")
         }
     }
     
-    let regTabla=new RegExp(`^[\\s\\t\\n]*CREATE[\\s\\t\\n]+TABLE[\\s\\t\\n]+[${escapeChar}]{0,1}([\\w]+)[${escapeChar}]{0,1}\\(.*\\)$`,"i")
+    let regTabla=new RegExp(`^[\\s\\t\\n]*CREATE[\\s\\t\\n]+TABLE[\\s\\t\\n]+[${escapeChar}]{0,1}([\\w]+)[${escapeChar}]{0,1}[\\s\\t\\n]*\\(.*\\)[\\s\\t\\n]*$`,"i")
     return  {
         tabla:sqlTable.replace(regTabla,"$1"),
         colums:colums,

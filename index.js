@@ -142,6 +142,10 @@ class sqlTablaModel
     {
         return (new model2Sql(this,config)).sql()
     }
+    sqlAddColumn(colum, config)
+    {
+        return (new model2Sql(this, config)).sqlAddColumn(colum)
+    }
     /**
     * Guarda el modelos en un archiv javascript 
     * 

@@ -109,6 +109,11 @@ export class sqlTablaModel<T = Record<string, any>> {
     sql(config?: any): string;
 
     /**
+     * Genera la sentencia SQL ALTER TABLE ADD COLUMN para una columna
+     */
+    sqlAddColumn(coll: ColumnDefinition<T>, config?: any): string;
+
+    /**
      * Guarda el modelo en un archivo de JavaScript
      */
     saveModel(file: string): void;

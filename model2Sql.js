@@ -175,6 +175,20 @@ class model2Sql {
     sql() {
         return this.#cerateTable(this.#model.getData())
     }
+    /**
+    * genera la sentencia ALTER TABLE ADD COLUMN para una columna
+    * @param {object} colum - definicion de columna
+    * @return {string}
+    */
+    sqlAddColumn(colum) {
+        let col = { ...colum }
+        let defaultVal = col.default !== undefined ? col.default : col.defaul
+        if (this.#typeDB === sqlHelpers.SQLITE3_DB && col.defaultNull === false && defaultVal === undefined) {
+            col.defaultNull = true
+        }
+        let columDef = this.#colums(col)
+        return `ALTER TABLE ${this.#helpers.protectIdentifiers(this.#model.tabla)} ADD COLUMN ${columDef};`
+    }
 }
 
 module.exports = model2Sql
