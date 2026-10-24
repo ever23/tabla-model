@@ -295,12 +295,16 @@ class sqlHelpers {
     campos(campos) {
         let ret = []
         for (let i in campos) {
-            if (!/\)\s+as\s+.*/.test(campos[i])) {
+            const raw = String(campos[i]).trim()
+            if (/^\d+(\.\d+)?$/i.test(raw)) {
+                ret[i] = raw
+            } else if (/^(\d+(?:\.\d+)?)\s+as\s+(.*)/i.test(raw)) {
+                ret[i] = raw.replace(/^(\d+(?:\.\d+)?)\s+as\s+(.*)/i, (m, n, a) => `${n} as ${this.#escapeChar}${a.trim()}${this.#escapeChar}`)
+            } else if (!/\)\s+as\s+.*/.test(campos[i])) {
                 ret[i] = this.protectIdentifiers(campos[i])
             } else {
                 ret[i] = campos[i].replace(/\)\s+as\s+(.*)/, `) as ${this.#escapeChar}$1${this.#escapeChar}`)
             }
-
         }
         return ret.join()
     }

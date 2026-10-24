@@ -65,6 +65,9 @@ describe("Test de la clase sqlHelpers",()=>
         let helper = new sqlHelpers(config)
         let params=["row1","row2","row3.a","count(*) as e","count(row1) as a"]
         assert.equal(helper.campos(params),"`row1`,`row2`,`row3`.`a`,count(*) as `e`,count(row1) as `a`")
+        assert.equal(helper.campos(["1"]), "1")
+        assert.equal(helper.campos([1]), "1")
+        assert.equal(helper.campos(["1 as total"]), "1 as `total`")
     })
     it("metodo __formatVarInsert",()=>
     {
