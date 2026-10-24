@@ -49,7 +49,7 @@ class sqlHelpers {
             let identifier = i.replace(/^(&&|\|\|)/, "").replace(/(=|<|>|<=|>=|!=|%|!)$/, "")
             let Regcomparation = /(=|<|>|<=|>=|!=|%|!)$/.exec(i)
             let comparation = "="
-            if (Regcomparation instanceof Array && typeof Regcomparation[0] != undefined) {
+            if (Regcomparation instanceof Array && typeof Regcomparation[0] !== 'undefined') {
                 comparation = Regcomparation[0] === "%" ? " LIKE " : Regcomparation[0]
                 comparation = comparation === "!" ? "!=" : comparation
             }
